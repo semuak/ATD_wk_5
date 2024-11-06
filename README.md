@@ -1,1 +1,1 @@
-#Warning: Violent flashing lights!
+Warning: Violent flashing lights!
