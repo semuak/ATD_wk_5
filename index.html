@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/images/dpr_logo.png" type="image/png">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&display=swap">
+  <title>Welcome to the Other Side</title>
+  <style>
+    body {
+      background-color: #ae0001;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;  /* Prevent scrolling */
+      position: relative;
+    }
+
+    /* Flicker overlay settings for TV-like flicker */
+    .flicker-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black; /* Make sure the overlay has a color */
+      pointer-events: none; /* Allow interaction with elements below */
+      z-index: 9999; /* Ensure it's on top */
+      animation: flicker 0.1s infinite; /* Faster, more erratic flicker */
+    }
+
+    /* Keyframes for a more erratic, TV-like flicker effect */
+    @keyframes flicker {
+      0% {
+        opacity: 0.05;
+      }
+      20% {
+        opacity: 0.3;
+      }
+      30% {
+        opacity: 0.2;
+      }
+      50% {
+        opacity: 0.6;
+      }
+      70% {
+        opacity: 0.1;
+      }
+      80% {
+        opacity: 0.4;
+      }
+      100% {
+        opacity: 0.3;
+      }
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 96px;
+      font-family: 'Creepster', Arial, sans-serif;
+      color: #000000; /* Light text for better contrast */
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Subtle spooky shadow */
+    }
+
+    .spotify-embed {
+      margin-top: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px #000000; /* Subtle black glow */
+      position: relative;
+    }
+
+    /* Image container settings */
+    .image-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    /* Floating images styling */
+    .floatingImage {
+      position: absolute;
+      opacity: 0; /* Initially hidden */
+      pointer-events: none; /* Prevent interaction with the image */
+      z-index: -1; /* Keep the image behind content */
+      filter: brightness(0.7) blur(2px);
+      transition: opacity 1s ease-in-out, filter 4s ease-in-out;
+    }
+
+    /* Smoke styles */
+    .smoke {
+      position: absolute;
+      background-color: black;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.3;  /* Start with very light opacity */
+      animation: moveSmoke 2s ease-out forwards; /* Faster fading */
+      filter: blur(2px);
+    }
+
+    @keyframes moveSmoke {
+      0% {
+        transform: scale(0.5);
+        opacity: 0.3; /* Very light starting opacity */
+      }
+      100% {
+        transform: scale(1);
+        opacity: 0; /* Fade out to full transparency */
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Flicker overlay element -->
+  <div class="flicker-overlay"></div>
+  
+  <h1>Welcome to the Other Side</h1>
+  
+  <iframe class="spotify-embed" 
+    src="https://open.spotify.com/embed/album/7vp2iMEQzhNX4sEIUbHpiJ?autoplay=1&muted=1" 
+    width="300" height="380" 
+    frameborder="0" 
+    allow="encrypted-media; autoplay">
+  </iframe>
+
+  <div class="image-container" id="imageContainer"></div>
+
+  <div id="smokeTrail"></div>  <!-- Smoke trail container -->
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const imageContainer = document.getElementById("imageContainer");
+      const numImages = 10; // Number of images to create
+
+      // Create and add the images
+      for (let i = 0; i < numImages; i++) {
+        const image = document.createElement("img");
+        image.src = "/images/miito_song_list.jpg"; // Path to your image
+        image.alt = "Spooky Image";
+        image.classList.add("floatingImage"); // Add the floatingImage class for CSS
+        imageContainer.appendChild(image); // Append each image to the container
+
+        // Apply random styles and generate unique animation for each image
+        applyRandomStylesAndAnimation(image, i);
+      }
+
+      // Function to apply random styles and generate unique animation
+      function applyRandomStylesAndAnimation(image, index) {
+        const randomTop = Math.random() * 90; // Random vertical position between 0% and 90%
+        const randomLeft = Math.random() * 90; // Random horizontal position between 0% and 90%
+        const randomBlur = Math.random() * 3; // Random blur value between 0 and 3px
+        const randomOpacity = Math.random() * 0.5 + 0.3; // Random opacity between 0.3 and 0.8
+        const randomSize = Math.random() * 100 + 50; // Random size between 50px and 150px
+
+        // Randomize size (most images will be normal size, but a few will be egregiously large)
+        const largerChance = Math.random() < 0.1; // 10% chance to make an image extremely large
+        const hugeSizeChance = Math.random() < 0.05; // 5% chance to make an image egregiously large
+        const sizeMultiplier = hugeSizeChance ? 5 : largerChance ? 2 : 1; // 5x for huge, 2x for large, 1x for normal
+        const finalSize = randomSize * sizeMultiplier;
+
+        // Apply random styles
+        image.style.top = `${randomTop}%`;
+        image.style.left = `${randomLeft}%`;
+        image.style.filter = `brightness(0.7) blur(${randomBlur}px)`;
+        image.style.opacity = randomOpacity;
+        image.style.width = `${finalSize}px`;
+        image.style.height = "auto"; // Maintain aspect ratio
+
+        // Generate random keyframes for each image
+        const animationName = `randomMove_${index}`;
+        const randomDuration = Math.random() * 25 + 5; // Random animation duration between 10 and 20 seconds
+
+        // Add the keyframes dynamically
+        addRandomKeyframes(animationName, randomDuration);
+
+        // Apply the animation to the image
+        image.style.animation = `${animationName} ${randomDuration}s linear infinite`;
+      }
+
+      // Function to dynamically create random keyframes for each image
+      function addRandomKeyframes(animationName, duration) {
+        const keyframes = `
+          @keyframes ${animationName} {
+            0% { top: ${Math.random() * 100}%; left: ${Math.random() * 100}%; }
+            25% { top: ${Math.random() * 100}%; left: ${Math.random() * 100}%; }
+            50% { top: ${Math.random() * 100}%; left: ${Math.random() * 100}%; }
+            75% { top: ${Math.random() * 100}%; left: ${Math.random() * 100}%; }
+            100% { top: ${Math.random() * 100}%; left: ${Math.random() * 100}%; }
+          }
+        `;
+
+        // Add the keyframes to a style element
+        const styleElement = document.createElement('style');
+        styleElement.innerHTML = keyframes;
+        document.head.appendChild(styleElement);
+      }
+
+      // Listen for mouse move events
+      document.addEventListener("mousemove", function(e) {
+        createSmokeParticle(e.pageX, e.pageY);
+      });
+
+      // Create a smoke particle
+      function createSmokeParticle(x, y) {
+        const smoke = document.createElement('div');
+        smoke.classList.add('smoke');
+        
+        const size = Math.random() * 10 + 10; // Sizes between 10px and 20px
+        smoke.style.width = `${size}px`;
+        smoke.style.height = `${size}px`;
+        
+        // Set the starting position of the particle at the mouse cursor location
+        smoke.style.left = `${x - size / 2}px`;
+        smoke.style.top = `${y - size / 2}px`;
+
+        // Append the smoke particle to the body
+        document.body.appendChild(smoke);
+
+        // Remove the particle after animation ends to avoid memory buildup
+        setTimeout(() => {
+          smoke.remove();
+        }, 2000); // Match the duration of the animation (2 seconds)
+      }
+    });
+  </script>
+</body>
+</html>
